@@ -1,0 +1,2480 @@
+```react
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import {
+  Sparkles,
+  Settings,
+  Play,
+  Eye,
+  EyeOff,
+  Image as ImageIcon,
+  List,
+  Share2,
+  Download,
+  Globe,
+  Copy,
+  Star,
+  Plus,
+  Trash2,
+  Edit3,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  MoreHorizontal,
+  Share,
+  SquarePen,
+  Wifi,
+  Battery,
+  Signal,
+  Maximize2,
+  RotateCcw,
+  X,
+  Upload,
+  BookOpen,
+  Layers,
+  Smartphone,
+  CheckCircle2
+} from 'lucide-react';
+
+// ============================================================================
+// PRE-POPULATED 100-ITEM LISTS
+// ============================================================================
+
+const DEFAULT_CELEBRITIES = [
+  "Leonardo DiCaprio", "Beyoncé", "Tom Cruise", "Taylor Swift", "Brad Pitt",
+  "Rihanna", "Dwayne Johnson", "Lady Gaga", "Johnny Depp", "Zendaya",
+  "Robert Downey Jr.", "Ariana Grande", "Chris Hemsworth", "Adele", "Will Smith",
+  "Shakira", "Keanu Reeves", "Billie Eilish", "Ryan Reynolds", "Selena Gomez",
+  "Scarlett Johansson", "Justin Bieber", "Morgan Freeman", "Dua Lipa", "Tom Hanks",
+  "Katy Perry", "Christian Bale", "Miley Cyrus", "Hugh Jackman", "Jennifer Lopez",
+  "Matt Damon", "Bruno Mars", "Margot Robbie", "Ed Sheeran", "Cillian Murphy",
+  "Emma Stone", "Drake", "Pedro Pascal", "Jennifer Lawrence", "The Weeknd",
+  "Samuel L. Jackson", "Meryl Streep", "Post Malone", "Ryan Gosling", "Anne Hathaway",
+  "Eminem", "Timothée Chalamet", "Gal Gadot", "Harry Styles", "Natalie Portman",
+  "Denzel Washington", "Doja Cat", "Chris Evans", "SZA", "Joaquin Phoenix",
+  "Olivia Rodrigo", "Harrison Ford", "Cardi B", "Benedict Cumberbatch", "Lana Del Rey",
+  "Al Pacino", "Bad Bunny", "Robert De Niro", "Karol G", "Anthony Hopkins",
+  "Rosalía", "Michael B. Jordan", "Kendall Jenner", "Daniel Craig", "Kylie Jenner",
+  "Henry Cavill", "Kim Kardashian", "Jason Momoa", "Bella Hadid", "Chris Pratt",
+  "Gigi Hadid", "Paul Rudd", "Hailey Bieber", "Mark Ruffalo", "Cara Delevingne",
+  "Jeremy Renner", "A$AP Rocky", "Tom Holland", "Travis Scott", "Jake Gyllenhaal",
+  "Kendrick Lamar", "Oscar Isaac", "J. Cole", "Willem Dafoe", "Coldplay",
+  "Nicolas Cage", "Elton John", "Jackie Chan", "Paul McCartney", "Clint Eastwood",
+  "Mick Jagger", "David Beckham", "Lionel Messi", "Cristiano Ronaldo", "LeBron James"
+];
+
+const DEFAULT_SHOPPING = [
+  "Leche Entera Orgánica", "Pan de Masa Madre", "Aguacates / Paltas", "Huevos de Campo", "Yogur Griego",
+  "Mantequilla con Sal", "Manzanas Rojas", "Plátanos / Bananas", "Fresas Frescas", "Arándanos",
+  "Espinaca Baby", "Tomates Cherry", "Cabezas de Ajo", "Cebollas Moradas", "Papas Rústicas",
+  "Aceite de Oliva Extra Virgen", "Vinagre Balsámico", "Sal de Mar en Grano", "Pimienta Negra", "Arroz Basmati",
+  "Pasta Espagueti", "Salsa Marinara", "Garbanzos", "Frijoles Negros", "Mantequilla de Maní",
+  "Mermelada de Fresa", "Miel de Abeja", "Jarabe de Arce", "Avena Tradicional", "Leche de Almendras",
+  "Queso Cheddar", "Mozzarella Fresca", "Queso Parmesano", "Salmón Ahumado", "Pechuga de Pollo",
+  "Pavo Molido", "Bife de Chorizo", "Lomo de Cerdo", "Tofu Firme", "Arvejas Congeladas",
+  "Helado de Vainilla", "Chocolate Amargo 70%", "Papas Fritas", "Almendras Tostadas", "Castañas de Cajú",
+  "Té Verde en Hebras", "Café en Grano Espresso", "Agua con Gas", "Jugo de Naranja", "Sidra de Manzana",
+  "Toallas de Papel", "Papel Higiénico", "Lavaloza Líquido", "Detergente de Ropa", "Bolsas de Basura",
+  "Papel Aluminio", "Papel Mantequilla", "Bolsas Herméticas", "Esponjas de Cocina", "Jabón Líquido",
+  "Pasta de Dientes", "Hilo Dental", "Enjuague Bucal", "Champú", "Acondicionador",
+  "Gel de Ducha", "Desodorante", "Hojas de Afeitar", "Protector Solar SPF 50", "Bálsamo Labial",
+  "Pilas AA", "Ampolletas LED", "Cable Cargador USB-C", "Notas Adhesivas", "Bolígrafos Negros",
+  "Ibuprofeno", "Curitas / Banditas", "Vitamina C", "Melatonina", "Antialérgico",
+  "Comida para Gatos", "Premios para Perros", "Cilantro Fresco", "Limones", "Limas",
+  "Raíz de Jengibre", "Pimientos Rojos", "Pepino", "Zanahorias", "Apio",
+  "Brócoli", "Coliflor", "Champiñones", "Zapallo Italiano", "Camotes",
+  "Totopos de Maíz", "Guacamole", "Hummus", "Pan Pita", "Pan Brioche"
+];
+
+const DEFAULT_CUSTOM_1 = [
+  "The Godfather", "Inception", "Pulp Fiction", "The Dark Knight", "Interstellar",
+  "Parasite", "Schindler's List", "Fight Club", "Forrest Gump", "The Matrix",
+  "Goodfellas", "Se7en", "The Silence of the Lambs", "Star Wars: A New Hope", "Saving Private Ryan",
+  "Spirited Away", "The Green Mile", "Terminator 2", "Back to the Future", "Gladiator",
+  "Psycho", "The Lion King", "Whiplash", "The Prestige", "Casablanca",
+  "The Departed", "Rear Window", "Alien", "Memento", "Apocalypse Now",
+  "Indiana Jones", "Django Unchained", "WALL-E", "The Shining", "Jurassic Park",
+  "The Truman Show", "Blade Runner 2049", "No Country for Old Men", "Reservoir Dogs", "Titanic",
+  "Braveheart", "Joker", "Oldboy", "Amélie", "Toy Story",
+  "A Clockwork Orange", "Taxi Driver", "Scarface", "Full Metal Jacket", "2001: A Space Odyssey",
+  "Citizen Kane", "Vertigo", "North by Northwest", "Lawrence of Arabia", "Singin' in the Rain",
+  "Good Will Hunting", "Eternal Sunshine", "Requiem for a Dream", "Snatch", "Inglourious Basterds",
+  "Shutter Island", "The Wolf of Wall Street", "Mad Max: Fury Road", "La La Land", "Arrival",
+  "Dune: Part Two", "Oppenheimer", "Spider-Man: Across the Spider-Verse", "Coco", "Up",
+  "Inside Out", "Finding Nemo", "The Incredibles", "Ratatouille", "Monsters, Inc.",
+  "Die Hard", "The Sixth Sense", "Unbreakable", "Signs", "Split",
+  "Get Out", "Us", "Nope", "Hereditary", "Midsommar",
+  "The Exorcist", "Jaws", "E.T.", "Close Encounters", "Catch Me If You Can",
+  "The Social Network", "Zodiac", "Gone Girl", "Prisoners", "Sicario",
+  "Grand Budapest Hotel", "Knives Out", "Everything Everywhere All at Once", "Logan", "Avengers: Endgame"
+];
+
+const DEFAULT_CUSTOM_2 = [
+  "Japón", "Italia", "Brasil", "Canadá", "Australia",
+  "Francia", "Suiza", "Nueva Zelanda", "España", "México",
+  "Argentina", "Chile", "Noruega", "Islandia", "Grecia",
+  "Portugal", "Tailandia", "Corea del Sur", "Reino Unido", "Alemania",
+  "Países Bajos", "Suecia", "Dinamarca", "Finlandia", "Irlanda",
+  "Austria", "Bélgica", "Croacia", "República Checa", "Polonia",
+  "Hungría", "Turquía", "Egipto", "Marruecos", "Sudáfrica",
+  "Kenia", "Tanzania", "Madagascar", "Mauricio", "Seychelles",
+  "India", "Nepal", "Sri Lanka", "Vietnam", "Camboya",
+  "Singapur", "Malasia", "Indonesia", "Filipinas", "Taiwán",
+  "China", "Mongolia", "Kazajistán", "Uzbekistán", "Georgia",
+  "Armenia", "Jordania", "Emiratos Árabes Unidos", "Omán", "Catar",
+  "Estados Unidos", "Costa Rica", "Panamá", "Colombia", "Perú",
+  "Ecuador", "Bolivia", "Uruguay", "Paraguay", "Cuba",
+  "República Dominicana", "Jamaica", "Bahamas", "Barbados", "Santa Lucía",
+  "Fiyi", "Samoa", "Tonga", "Vanuatu", "Papúa Nueva Guinea",
+  "Mónaco", "Luxemburgo", "Liechtenstein", "Malta", "Chipre",
+  "Estonia", "Letonia", "Lituania", "Eslovenia", "Eslovaquia",
+  "Rumania", "Bulgaria", "Serbia", "Montenegro", "Albania",
+  "Escocia", "Gales", "Groenlandia", "Islas Feroe", "Antártida"
+];
+
+const DEFAULT_CUSTOM_3 = [
+  "Golden Retriever", "Leopardo de las Nieves", "Panda Rojo", "Pingüino Emperador", "Delfín Nariz de Botella",
+  "Elefante Africano", "Tigre de Bengala", "Panda Gigante", "Koala", "Ornitorrinco",
+  "Zorro Ártico", "Águila Calva", "Gran Tiburón Blanco", "Ballena Azul", "Orca",
+  "Guepardo", "Camaleón", "Pulpo", "Caballito de Mar", "Flamenco",
+  "Pavo Real", "Colibrí", "Tucán", "Guacamayo", "Lechuza",
+  "Oso Polar", "Oso Grizzly", "Lobo Gris", "Canguro Rojo", "Ualabí",
+  "Perezoso", "Capibara", "Suricata", "Lémur", "Chimpancé",
+  "Gorila Espalda Plateada", "Orangután", "Jirafa", "Cebra", "Hipopótamo",
+  "Rinoceronte", "Bisonte", "Alce", "Reno", "Íbice",
+  "Alpaca", "Llama", "Camello", "Zorro Fénec", "Erizo",
+  "Nutria", "Castor", "Tejón", "Glotón", "Lince",
+  "Puma", "Jaguar", "Pantera Negra", "Pantera Nebulosa", "Ocelote",
+  "Dragón de Komodo", "Tortuga de Galápagos", "Tortuga Marina", "Iguana", "Gecko",
+  "Cobra Real", "Anaconda", "Rana Dardo Venenoso", "Ajolote", "Salamandra",
+  "Mantarraya", "Pez Payaso", "Pez Ángel", "Pez Espada", "Narval",
+  "Ballena Beluga", "Manatí", "Morsa", "Foca", "Lobo Marino",
+  "Albatros", "Frailecillo", "Pelícano", "Cisne", "Martín Pescador",
+  "Halcón Peregrino", "Gavilán", "Cóndor Andino", "Avestruz", "Kiwi",
+  "Mariposa Monarca", "Libélula", "Abeja Reina", "Mantis Religiosa", "Luciérnaga",
+  "Estrella de Mar", "Medusa", "Langosta", "Cangrejo Ermitaño", "Husky Siberiano"
+];
+
+const ITUNES_TRACK_IDS = {
+  youtube: 544007664,
+  instagram: 389801252,
+  facebook: 284882215,
+  ytmusic: 1017492454,
+  brawlstars: 1229016807,
+  clashroyale: 1053012308,
+  whatsapp: 310633997,
+  irremote: 1473698232,
+  gmaps: 585027354,
+  waze: 323229106,
+  mercadolibre: 463624852,
+  tiktok: 835599320,
+  gmail: 422689480,
+  chrome: 535886823,
+  netflix: 363590051,
+  discord: 985746746,
+  googleearth: 293622097,
+  duolingo: 570060128,
+  telegram: 686449807
+};
+
+const OFFICIAL_FALLBACK_URLS = {
+  youtube: 'https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg',
+  instagram: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg',
+  facebook: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg',
+  ytmusic: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg',
+  whatsapp: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg',
+  gmaps: 'https://upload.wikimedia.org/wikipedia/commons/a/aa/Google_Maps_icon_%282020%29.svg',
+  tiktok: 'https://sf-tb-sg.ibytedtos.com/obj/eden-sg/uhtyvueh7nulogpoguhm/tiktok-icon2.png',
+  gmail: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg',
+  chrome: 'https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg',
+  netflix: 'https://upload.wikimedia.org/wikipedia/commons/7/75/Netflix_icon.svg',
+  discord: 'https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png',
+  googleearth: 'https://upload.wikimedia.org/wikipedia/commons/e/e4/Google_Earth_icon.svg',
+  duolingo: 'https://upload.wikimedia.org/wikipedia/commons/1/12/Duolingo_logo_%282019%29.svg',
+  telegram: 'https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg'
+};
+
+const DEFAULT_PAGE_1_TOP_APPS = [
+  { id: 'clock', name: 'Reloj', badge: '', trackId: null },
+  { id: 'gmaps', name: 'Google Maps', badge: '', trackId: 585027354 },
+  { id: 'waze', name: 'Waze', badge: '', trackId: 323229106 }
+];
+
+const DEFAULT_PAGE_1_KEYPAD_APPS = [
+  { digit: 1, id: 'duolingo', name: 'Duolingo', badge: '', trackId: 570060128 },
+  { digit: 2, id: 'youtube', name: 'YouTube', badge: '3', trackId: 544007664 },
+  { digit: 3, id: 'instagram', name: 'Instagram', badge: '9', trackId: 389801252 },
+  { digit: 4, id: 'facebook', name: 'Facebook', badge: '4', trackId: 284882215 },
+  { digit: 5, id: 'ytmusic', name: 'YT Music', badge: '', trackId: 1017492454 },
+  { digit: 6, id: 'brawlstars', name: 'Brawl Stars', badge: '', trackId: 1229016807 },
+  { digit: 7, id: 'clashroyale', name: 'Clash Royale', badge: '2', trackId: 1053012308 },
+  { digit: 8, id: 'whatsapp', name: 'WhatsApp', badge: '12', trackId: 310633997 },
+  { digit: 9, id: 'irremote', name: 'Mi Remote', badge: '', trackId: 1473698232 }
+];
+
+const DEFAULT_PAGE_2_TOP_APPS = [
+  { id: 'weather', name: 'Clima', badge: '', trackId: null },
+  { id: 'camera', name: 'Cámara', badge: '', trackId: null },
+  { id: 'calculator', name: 'Calculadora', badge: '', trackId: null }
+];
+
+const DEFAULT_PAGE_2_KEYPAD_APPS = [
+  { digit: 1, id: 'tiktok', name: 'TikTok', badge: '5', trackId: 835599320 },
+  { digit: 2, id: 'gmail', name: 'Gmail', badge: '18', trackId: 422689480 },
+  { digit: 3, id: 'chrome', name: 'Chrome', badge: '', trackId: 535886823 },
+  { digit: 4, id: 'netflix', name: 'Netflix', badge: '', trackId: 363590051 },
+  { digit: 5, id: 'mercadolibre', name: 'Mercado Libre', badge: '1', trackId: 463624852 },
+  { digit: 6, id: 'telegram', name: 'Telegram', badge: '2', trackId: 686449807 },
+  { digit: 7, id: 'discord', name: 'Discord', badge: '7', trackId: 985746746 },
+  { digit: 8, id: 'googleearth', name: 'Google Earth', badge: '', trackId: 293622097 },
+  { digit: 9, id: 'settings', name: 'Ajustes', badge: '1', trackId: null }
+];
+
+const DEFAULT_PAGE_3_TOP_APPS = [
+  { id: 'calculator', name: 'Calculadora', badge: '', trackId: null },
+  { id: 'camera', name: 'Cámara', badge: '', trackId: null },
+  { id: 'weather', name: 'Clima', badge: '', trackId: null }
+];
+
+const DEFAULT_PAGE_3_KEYPAD_APPS = [
+  { digit: 1, id: 'chrome', name: 'Chrome', badge: '', trackId: 535886823, isDecorative: true },
+  { digit: 2, id: 'gmail', name: 'Gmail', badge: '1', trackId: 422689480, isDecorative: true },
+  { digit: 3, id: 'notes', name: 'Notas', badge: '', isNotesApp: true, trackId: null, isDecorative: false },
+  { digit: 4, id: 'discord', name: 'Discord', badge: '', trackId: 985746746, isDecorative: true },
+  { digit: 5, id: 'netflix', name: 'Netflix', badge: '', trackId: 363590051, isDecorative: true },
+  { digit: 6, id: 'whatsapp', name: 'WhatsApp', badge: '', trackId: 310633997, isDecorative: true },
+  { digit: 7, id: 'instagram', name: 'Instagram', badge: '', trackId: 389801252, isDecorative: true },
+  { digit: 8, id: 'tiktok', name: 'TikTok', badge: '', trackId: 835599320, isDecorative: true },
+  { digit: 9, id: 'settings', name: 'Ajustes', badge: '', trackId: null, isDecorative: true }
+];
+
+const RealisticAppIcon = ({ id, customIconUrl, resolvedIconsMap = {}, size = "w-[62px] h-[62px]" }) => {
+  const [imgError, setImgError] = useState(false);
+  const officialArtworkUrl = customIconUrl || resolvedIconsMap[id];
+
+  if (officialArtworkUrl && !imgError) {
+    return (
+      <div className={`${size} rounded-[15px] overflow-hidden shadow-md bg-zinc-900 shrink-0 relative`}>
+        <img
+          src={officialArtworkUrl}
+          alt={id}
+          onError={() => setImgError(true)}
+          className="w-full h-full object-cover block select-none pointer-events-none"
+          draggable={false}
+        />
+      </div>
+    );
+  }
+
+  if (OFFICIAL_FALLBACK_URLS[id] && !imgError) {
+    const bgMap = {
+      youtube: 'bg-white p-2.5',
+      instagram: 'bg-white p-0',
+      facebook: 'bg-[#1877F2] p-0',
+      ytmusic: 'bg-[#0f0f0f] p-2',
+      whatsapp: 'bg-[#25D366] p-1.5',
+      gmaps: 'bg-white p-2.5',
+      tiktok: 'bg-black p-0',
+      gmail: 'bg-white p-2.5',
+      chrome: 'bg-white p-2',
+      netflix: 'bg-black p-0',
+      discord: 'bg-[#5865F2] p-2.5',
+      googleearth: 'bg-white p-2',
+      duolingo: 'bg-[#58cc02] p-2',
+      telegram: 'bg-[#229ed9] p-2'
+    };
+    return (
+      <div
+        className={`${size} rounded-[15px] overflow-hidden shadow-md flex items-center justify-center shrink-0 ${
+          bgMap[id] || 'bg-white p-2'
+        }`}
+      >
+        <img
+          src={OFFICIAL_FALLBACK_URLS[id]}
+          alt={id}
+          onError={() => setImgError(true)}
+          className="w-full h-full object-contain block select-none pointer-events-none"
+          draggable={false}
+        />
+      </div>
+    );
+  }
+
+  switch (id) {
+    case 'clock':
+      return (
+        <div className={`${size} rounded-[15px] bg-zinc-950 flex items-center justify-center shadow-md relative overflow-hidden p-1.5`}>
+          <div className="w-full h-full rounded-full bg-white flex items-center justify-center relative">
+            {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => (
+              <div
+                key={deg}
+                className="absolute w-0.5 h-full flex flex-col justify-between py-0.5"
+                style={{ transform: `rotate(${deg}deg)` }}
+              >
+                <span className={`w-0.5 ${deg % 90 === 0 ? 'h-1.5 bg-zinc-900' : 'h-1 bg-zinc-400'}`} />
+              </div>
+            ))}
+            <div className="absolute w-0.5 h-3.5 bg-zinc-900 bottom-1/2 origin-bottom rounded-full" style={{ transform: 'rotate(-55deg)' }} />
+            <div className="absolute w-0.5 h-5 bg-zinc-900 bottom-1/2 origin-bottom rounded-full" style={{ transform: 'rotate(48deg)' }} />
+            <div className="absolute w-[1.5px] h-5 bg-orange-500 bottom-1/2 origin-bottom" style={{ transform: 'rotate(160deg)' }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-orange-500 z-10" />
+          </div>
+        </div>
+      );
+
+    case 'weather':
+      return (
+        <div className={`${size} rounded-[15px] bg-gradient-to-b from-[#1e6cd6] to-[#56b4fc] flex items-center justify-center shadow-md relative overflow-hidden`}>
+          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-200 to-amber-400 absolute top-2.5 left-2.5 shadow-sm" />
+          <svg viewBox="0 0 64 64" className="w-11 h-11 relative z-10 mt-2 ml-1.5">
+            <path
+              d="M22 44h23a9 9 0 0 0 1-17.9A12.5 12.5 0 0 0 22 23a10 10 0 0 0 0 20z"
+              fill="rgba(255,255,255,0.96)"
+            />
+          </svg>
+        </div>
+      );
+
+    case 'irremote':
+      return (
+        <div className={`${size} rounded-[15px] bg-gradient-to-b from-[#ff7e29] to-[#ff4b00] flex items-center justify-center shadow-md relative overflow-hidden`}>
+          <div className="w-10 h-10 rounded-full bg-white/95 flex flex-col items-center justify-center shadow-sm">
+            <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-[#ff5500] fill-none" strokeWidth="2.4" strokeLinecap="round">
+              <path d="M12 3v8" />
+              <path d="M17.6 6.6a8 8 0 1 1-11.2 0" />
+            </svg>
+          </div>
+        </div>
+      );
+
+    case 'notes':
+      return (
+        <div className={`${size} rounded-[15px] bg-white flex flex-col shadow-md relative overflow-hidden`}>
+          <div className="h-4 w-full bg-gradient-to-b from-[#f7ce46] to-[#e5ac00] border-b border-amber-600/30" />
+          <div className="flex-1 px-2.5 py-2 flex flex-col justify-around">
+            <div className="h-[1.5px] bg-zinc-200 w-full" />
+            <div className="h-[1.5px] bg-zinc-200 w-full" />
+            <div className="h-[1.5px] bg-zinc-200 w-3/4" />
+          </div>
+        </div>
+      );
+
+    case 'settings':
+      return (
+        <div className={`${size} rounded-[15px] bg-gradient-to-b from-zinc-400 to-zinc-600 flex items-center justify-center shadow-md relative overflow-hidden`}>
+          <Settings className="w-9 h-9 text-zinc-100" />
+        </div>
+      );
+
+    case 'camera':
+      return (
+        <div className={`${size} rounded-[15px] bg-gradient-to-b from-zinc-200 to-zinc-400 flex items-center justify-center shadow-md relative overflow-hidden`}>
+          <div className="w-11 h-8 rounded-lg bg-zinc-800 flex items-center justify-center relative">
+            <div className="w-4 h-4 rounded-full border-2 border-zinc-400 bg-zinc-950" />
+            <div className="w-1.5 h-1.5 rounded-full bg-amber-400 absolute top-1.5 right-1.5" />
+          </div>
+        </div>
+      );
+
+    case 'calculator':
+      return (
+        <div className={`${size} rounded-[15px] bg-zinc-900 flex items-center justify-center shadow-md relative overflow-hidden p-2.5`}>
+          <div className="grid grid-cols-2 gap-1.5 w-full h-full">
+            <div className="rounded-full bg-zinc-600 flex items-center justify-center text-white text-xs font-bold">+</div>
+            <div className="rounded-full bg-zinc-600 flex items-center justify-center text-white text-xs font-bold">−</div>
+            <div className="rounded-full bg-zinc-600 flex items-center justify-center text-white text-xs font-bold">×</div>
+            <div className="rounded-full bg-orange-500 flex items-center justify-center text-white text-xs font-bold">=</div>
+          </div>
+        </div>
+      );
+
+    case 'phone':
+      return (
+        <div className={`${size} rounded-[15px] bg-gradient-to-b from-[#65e87c] to-[#28cd41] flex items-center justify-center shadow-md`}>
+          <svg viewBox="0 0 24 24" className="w-8 h-8 fill-white">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+          </svg>
+        </div>
+      );
+
+    case 'messages':
+      return (
+        <div className={`${size} rounded-[15px] bg-gradient-to-b from-[#65e87c] to-[#28cd41] flex items-center justify-center shadow-md`}>
+          <svg viewBox="0 0 24 24" className="w-8 h-8 fill-white">
+            <path d="M12 3c5.5 0 10 3.58 10 8s-4.5 8-10 8c-1.24 0-2.43-.18-3.53-.5C5.55 21 2 21 2 21c2.33-2.33 2.7-3.9 2.75-4.5C3.05 15.07 2 13.13 2 11c0-4.42 4.5-8 10-8z" />
+          </svg>
+        </div>
+      );
+
+    default:
+      return (
+        <div className={`${size} rounded-[15px] bg-zinc-800 flex items-center justify-center shadow-md text-white font-bold text-xs`}>
+          App
+        </div>
+      );
+  }
+};
+
+const PRESET_WALLPAPERS = [
+  {
+    id: 'ios-18-dark',
+    name: 'iOS 18 Pro Titanium',
+    style: 'radial-gradient(circle at 50% 20%, #3b1d5e 0%, #111827 52%, #030712 100%)',
+    url: ''
+  },
+  {
+    id: 'ios-dark-aurora',
+    name: 'iOS Dark Aurora',
+    style: 'linear-gradient(145deg, #0f172a 0%, #1e1b4b 35%, #3b0764 70%, #090d16 100%)',
+    url: ''
+  },
+  {
+    id: 'ventura-bloom',
+    name: 'Sunset Dune',
+    style: 'linear-gradient(160deg, #1d2b64 0%, #f8cdda 55%, #ea580c 100%)',
+    url: ''
+  },
+  {
+    id: 'emerald-mist',
+    name: 'Midnight Emerald',
+    style: 'linear-gradient(135deg, #022c22 0%, #064e3b 40%, #0f172a 85%, #020617 100%)',
+    url: ''
+  }
+];
+
+export default function App() {
+  const [autoLaunchPerformance, setAutoLaunchPerformance] = useState(() => {
+    try {
+      return localStorage.getItem('mirage_auto_perf') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const [appMode, setAppMode] = useState(() => {
+    try {
+      return localStorage.getItem('mirage_auto_perf') === 'true' ? 'performance' : 'settings';
+    } catch {
+      return 'settings';
+    }
+  });
+
+  const [activeSettingsTab, setActiveSettingsTab] = useState('icons');
+  const [showTrainingOverlay, setShowTrainingOverlay] = useState(false);
+
+  const [resolvedIconsMap, setResolvedIconsMap] = useState(() => {
+    try {
+      const cached = localStorage.getItem('mirage_itunes_icons_v1');
+      return cached ? JSON.parse(cached) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  const [page1TopApps, setPage1TopApps] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mirage_p1_top_v3');
+      return saved ? JSON.parse(saved) : DEFAULT_PAGE_1_TOP_APPS;
+    } catch {
+      return DEFAULT_PAGE_1_TOP_APPS;
+    }
+  });
+
+  const [page1KeypadApps, setPage1KeypadApps] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mirage_p1_keypad_v3');
+      return saved ? JSON.parse(saved) : DEFAULT_PAGE_1_KEYPAD_APPS;
+    } catch {
+      return DEFAULT_PAGE_1_KEYPAD_APPS;
+    }
+  });
+
+  const [page2TopApps, setPage2TopApps] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mirage_p2_top_v3');
+      return saved ? JSON.parse(saved) : DEFAULT_PAGE_2_TOP_APPS;
+    } catch {
+      return DEFAULT_PAGE_2_TOP_APPS;
+    }
+  });
+
+  const [page2KeypadApps, setPage2KeypadApps] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mirage_p2_keypad_v3');
+      return saved ? JSON.parse(saved) : DEFAULT_PAGE_2_KEYPAD_APPS;
+    } catch {
+      return DEFAULT_PAGE_2_KEYPAD_APPS;
+    }
+  });
+
+  const [page3TopApps, setPage3TopApps] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mirage_p3_top_v3');
+      return saved ? JSON.parse(saved) : DEFAULT_PAGE_3_TOP_APPS;
+    } catch {
+      return DEFAULT_PAGE_3_TOP_APPS;
+    }
+  });
+
+  const [page3KeypadApps, setPage3KeypadApps] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mirage_p3_keypad_v3');
+      return saved ? JSON.parse(saved) : DEFAULT_PAGE_3_KEYPAD_APPS;
+    } catch {
+      return DEFAULT_PAGE_3_KEYPAD_APPS;
+    }
+  });
+
+  const [selectedSlotToEdit, setSelectedSlotToEdit] = useState({
+    group: 'p1_keypad',
+    index: 0
+  });
+  const [appStoreQuery, setAppStoreQuery] = useState('');
+  const [appStoreResults, setAppStoreResults] = useState([]);
+  const [isSearchingAppStore, setIsSearchingAppStore] = useState(false);
+
+  useEffect(() => {
+    const fetchOfficialAppStoreIcons = async () => {
+      try {
+        const trackIdsToIdMap = {};
+        Object.entries(ITUNES_TRACK_IDS).forEach(([appKey, trackId]) => {
+          trackIdsToIdMap[trackId] = appKey;
+        });
+
+        const idsList = Object.values(ITUNES_TRACK_IDS).join(',');
+        const res = await fetch(`https://itunes.apple.com/lookup?id=${idsList}&country=cl`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data && Array.isArray(data.results)) {
+          const newMap = { ...resolvedIconsMap };
+          data.results.forEach((item) => {
+            const appKey = trackIdsToIdMap[item.trackId];
+            const hiResIcon =
+              item.artworkUrl512 ||
+              (item.artworkUrl100 ? item.artworkUrl100.replace('100x100bb', '512x512bb') : null);
+            if (appKey && hiResIcon) {
+              newMap[appKey] = hiResIcon;
+            }
+          });
+          setResolvedIconsMap(newMap);
+          try {
+            localStorage.setItem('mirage_itunes_icons_v1', JSON.stringify(newMap));
+          } catch {}
+        }
+      } catch (err) {
+        console.warn('Could not reach iTunes Lookup API:', err);
+      }
+    };
+
+    fetchOfficialAppStoreIcons();
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('mirage_p1_top_v3', JSON.stringify(page1TopApps));
+      localStorage.setItem('mirage_p1_keypad_v3', JSON.stringify(page1KeypadApps));
+      localStorage.setItem('mirage_p2_top_v3', JSON.stringify(page2TopApps));
+      localStorage.setItem('mirage_p2_keypad_v3', JSON.stringify(page2KeypadApps));
+      localStorage.setItem('mirage_p3_top_v3', JSON.stringify(page3TopApps));
+      localStorage.setItem('mirage_p3_keypad_v3', JSON.stringify(page3KeypadApps));
+    } catch {}
+  }, [page1TopApps, page1KeypadApps, page2TopApps, page2KeypadApps, page3TopApps, page3KeypadApps]);
+
+  const handleSearchAppStore = async (e) => {
+    e?.preventDefault();
+    const q = appStoreQuery.trim();
+    if (!q) return;
+    setIsSearchingAppStore(true);
+    try {
+      const res = await fetch(
+        `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&country=cl&entity=software&limit=12`
+      );
+      const data = await res.json();
+      setAppStoreResults(data.results || []);
+    } catch {
+      showToast('Error al buscar en App Store', 'error');
+    } finally {
+      setIsSearchingAppStore(false);
+    }
+  };
+
+  const applyAppStoreItemToSelectedSlot = (name, iconUrl) => {
+    const { group, index } = selectedSlotToEdit;
+    const updateList = (list) =>
+      list.map((item, idx) => (idx === index ? { ...item, name, customIconUrl: iconUrl } : item));
+
+    if (group === 'p1_keypad') setPage1KeypadApps(updateList);
+    else if (group === 'p1_top') setPage1TopApps(updateList);
+    else if (group === 'p2_keypad') setPage2KeypadApps(updateList);
+    else if (group === 'p2_top') setPage2TopApps(updateList);
+    else if (group === 'p3_keypad') setPage3KeypadApps(updateList);
+    else if (group === 'p3_top') setPage3TopApps(updateList);
+
+    showToast(`¡Icono oficial de "${name}" aplicado!`);
+  };
+
+  const handleUploadCustomAppIcon = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const dataUrl = ev.target.result;
+      const { group, index } = selectedSlotToEdit;
+      const currentName =
+        group === 'p1_keypad'
+          ? page1KeypadApps[index]?.name
+          : group === 'p1_top'
+          ? page1TopApps[index]?.name
+          : group === 'p2_keypad'
+          ? page2KeypadApps[index]?.name
+          : group === 'p2_top'
+          ? page2TopApps[index]?.name
+          : group === 'p3_keypad'
+          ? page3KeypadApps[index]?.name
+          : page3TopApps[index]?.name;
+      applyAppStoreItemToSelectedSlot(currentName || 'App', dataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const resetAllIconsToDefaults = () => {
+    setPage1TopApps(DEFAULT_PAGE_1_TOP_APPS);
+    setPage1KeypadApps(DEFAULT_PAGE_1_KEYPAD_APPS);
+    setPage2TopApps(DEFAULT_PAGE_2_TOP_APPS);
+    setPage2KeypadApps(DEFAULT_PAGE_2_KEYPAD_APPS);
+    setPage3TopApps(DEFAULT_PAGE_3_TOP_APPS);
+    setPage3KeypadApps(DEFAULT_PAGE_3_KEYPAD_APPS);
+    showToast('Iconos restaurados a los originales oficiales');
+  };
+
+  const [selectedWallpaperId, setSelectedWallpaperId] = useState(() => {
+    try {
+      return localStorage.getItem('mirage_wp_id') || 'ios-18-dark';
+    } catch {
+      return 'ios-18-dark';
+    }
+  });
+  const [customWallpaperDataUrl, setCustomWallpaperDataUrl] = useState(() => {
+    try {
+      return localStorage.getItem('mirage_wp_custom') || null;
+    } catch {
+      return null;
+    }
+  });
+  const [wallpaperUrlInput, setWallpaperUrlInput] = useState('');
+
+  const [lists, setLists] = useState([
+    {
+      id: 'celebrities',
+      title: 'Celebridades',
+      isCustom: false,
+      forceItem: 'Keanu Reeves',
+      hideMode: false,
+      items: DEFAULT_CELEBRITIES
+    },
+    {
+      id: 'shopping',
+      title: 'Lista del Súper',
+      isCustom: false,
+      forceItem: 'Chocolate Amargo 70%',
+      hideMode: false,
+      items: DEFAULT_SHOPPING
+    },
+    {
+      id: 'custom1',
+      title: 'Películas por ver',
+      isCustom: true,
+      forceItem: 'Inception',
+      hideMode: false,
+      items: DEFAULT_CUSTOM_1
+    },
+    {
+      id: 'custom2',
+      title: 'Próximos Viajes',
+      isCustom: true,
+      forceItem: 'Japón',
+      hideMode: false,
+      items: DEFAULT_CUSTOM_2
+    },
+    {
+      id: 'custom3',
+      title: 'Ideas y Animales',
+      isCustom: true,
+      forceItem: 'Panda Rojo',
+      hideMode: true,
+      items: DEFAULT_CUSTOM_3
+    }
+  ]);
+
+  const [editingListId, setEditingListId] = useState('celebrities');
+  const [newItemText, setNewItemText] = useState('');
+  const [bulkItemsText, setBulkItemsText] = useState('');
+  const [showBulkModal, setShowBulkModal] = useState(false);
+  const [itemSearchFilter, setItemSearchFilter] = useState('');
+
+  const [localization, setLocalization] = useState({
+    notesHeader: 'Notas',
+    dummyNoteText: '1. ',
+    folderSubtitle: 'Carpetas',
+    searchPlaceholder: 'Buscar',
+    daysOfWeek: ['Hoy', 'Ayer', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
+  });
+
+  const [importUrlInput, setImportUrlInput] = useState('');
+  const [pendingImportData, setPendingImportData] = useState(null);
+  const [targetOverwriteSlot, setTargetOverwriteSlot] = useState('custom1');
+  const [toastMessage, setToastMessage] = useState(null);
+
+  // 3-page carousel state ('home1' | 'home2' | 'home3' | 'notes_list' | 'note_detail')
+  const [perfScreen, setPerfScreen] = useState('home1');
+  const [dragOffsetPx, setDragOffsetPx] = useState(0);
+  const [isDraggingCarousel, setIsDraggingCarousel] = useState(false);
+  const [isNotesZoomOpening, setIsNotesZoomOpening] = useState(false);
+
+  const [digit1, setDigit1] = useState(null);
+  const [digit2, setDigit2] = useState(null);
+  const [forcedNumber, setForcedNumber] = useState(7);
+  const [openedNoteId, setOpenedNoteId] = useState(null);
+  const [lastDetectedCell, setLastDetectedCell] = useState(null);
+  const [currentTimeStr, setCurrentTimeStr] = useState('9:41');
+  const [currentDateLabel, setCurrentDateLabel] = useState('Domingo, 15 de noviembre');
+
+  const gridPage1Ref = useRef(null);
+  const gridPage2Ref = useRef(null);
+  const batteryTapCountRef = useRef({ count: 0, timer: null });
+  const gestureStartRef = useRef({
+    active: false,
+    x: 0,
+    y: 0,
+    cellDigit: 0,
+    touchCount: 1,
+    shiftKey: false
+  });
+
+  useEffect(() => {
+    const setMeta = (name, content) => {
+      let el = document.querySelector(`meta[name="${name}"]`);
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute('name', name);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', content);
+    };
+    setMeta('apple-mobile-web-app-capable', 'yes');
+    setMeta('mobile-web-app-capable', 'yes');
+    setMeta('apple-mobile-web-app-status-bar-style', 'black-translucent');
+    setMeta('apple-mobile-web-app-title', 'Notas');
+    setMeta('theme-color', '#000000');
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('mirage_auto_perf', String(autoLaunchPerformance));
+      localStorage.setItem('mirage_wp_id', selectedWallpaperId);
+      if (customWallpaperDataUrl) {
+        localStorage.setItem('mirage_wp_custom', customWallpaperDataUrl);
+      }
+    } catch {}
+  }, [autoLaunchPerformance, selectedWallpaperId, customWallpaperDataUrl]);
+
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date();
+      const hrs = now.getHours();
+      const mins = now.getMinutes().toString().padStart(2, '0');
+      const displayHrs = hrs % 12 || 12;
+      setCurrentTimeStr(`${displayHrs}:${mins}`);
+      try {
+        const formatted = now.toLocaleDateString('es-ES', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long'
+        });
+        setCurrentDateLabel(formatted.charAt(0).toUpperCase() + formatted.slice(1));
+      } catch {
+        setCurrentDateLabel('Hoy');
+      }
+    };
+    updateClock();
+    const interval = setInterval(updateClock, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const showToast = (msg, type = 'success') => {
+    setToastMessage({ msg, type });
+    setTimeout(() => {
+      setToastMessage((prev) => (prev?.msg === msg ? null : prev));
+    }, 3200);
+  };
+
+  const calculateTargetNumber = (d1, d2) => {
+    if (d1 === null || d2 === null) return 7;
+    if (d1 === 0 && d2 === 0) return 100;
+    return d1 * 10 + d2;
+  };
+
+  const detectSecretGridDigit = (clientX, clientY) => {
+    const activeGridEl = perfScreen === 'home1' ? gridPage1Ref.current : perfScreen === 'home2' ? gridPage2Ref.current : null;
+    if (!activeGridEl) return 0;
+
+    const rect = activeGridEl.getBoundingClientRect();
+    if (
+      clientX < rect.left ||
+      clientX > rect.right ||
+      clientY < rect.top ||
+      clientY > rect.bottom
+    ) {
+      return 0;
+    }
+
+    const relX = clientX - rect.left;
+    const relY = clientY - rect.top;
+    const col = Math.min(2, Math.max(0, Math.floor((relX / rect.width) * 3)));
+    const row = Math.min(2, Math.max(0, Math.floor((relY / rect.height) * 3)));
+    return row * 3 + col + 1;
+  };
+
+  const handleGestureStart = (clientX, clientY, touchCount = 1, shiftKey = false) => {
+    const detectedDigit =
+      perfScreen === 'home1' || perfScreen === 'home2'
+        ? detectSecretGridDigit(clientX, clientY)
+        : 0;
+
+    setLastDetectedCell(detectedDigit);
+    gestureStartRef.current = {
+      active: true,
+      x: clientX,
+      y: clientY,
+      cellDigit: detectedDigit,
+      touchCount,
+      shiftKey
+    };
+
+    if (perfScreen === 'home1' || perfScreen === 'home2' || perfScreen === 'home3') {
+      setIsDraggingCarousel(true);
+    }
+  };
+
+  const handleGestureMove = (clientX, clientY) => {
+    if (!gestureStartRef.current.active) return;
+    if (perfScreen !== 'home1' && perfScreen !== 'home2' && perfScreen !== 'home3') return;
+
+    const deltaX = clientX - gestureStartRef.current.x;
+    const deltaY = clientY - gestureStartRef.current.y;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY) * 0.7) {
+      if (perfScreen === 'home1' && deltaX > 0) {
+        setDragOffsetPx(deltaX * 0.28);
+      } else if (perfScreen === 'home3' && deltaX < 0) {
+        setDragOffsetPx(deltaX * 0.28);
+      } else {
+        setDragOffsetPx(deltaX);
+      }
+    }
+  };
+
+  const handleGestureEnd = (clientX, clientY) => {
+    if (!gestureStartRef.current.active) return;
+    const start = gestureStartRef.current;
+    gestureStartRef.current.active = false;
+
+    const deltaX = clientX - start.x;
+    const deltaY = clientY - start.y;
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+
+    setIsDraggingCarousel(false);
+    setDragOffsetPx(0);
+
+    if (
+      (perfScreen === 'notes_list' || perfScreen === 'note_detail') &&
+      deltaY > 75 &&
+      absY > absX &&
+      (start.touchCount >= 2 || start.shiftKey)
+    ) {
+      triggerHardResetToSettings();
+      return;
+    }
+
+    if (absX > 42 && absX > absY * 1.05) {
+      if (deltaX < 0) {
+        // SWIPE LEFT
+        if (perfScreen === 'home1') {
+          const d1 = start.cellDigit;
+          setDigit1(d1);
+          setPerfScreen('home2');
+        } else if (perfScreen === 'home2') {
+          const d2 = start.cellDigit;
+          setDigit2(d2);
+          setPerfScreen('home3');
+        } else if (perfScreen === 'home3') {
+          const finalNum = calculateTargetNumber(digit1 ?? 0, digit2 ?? 0);
+          setForcedNumber(finalNum);
+          launchNotesWithAndroidZoom();
+        }
+      } else if (deltaX > 0) {
+        // SWIPE RIGHT
+        if (perfScreen === 'home2') {
+          setDigit1(null);
+          setDigit2(null);
+          setPerfScreen('home1');
+        } else if (perfScreen === 'home3') {
+          setDigit2(null);
+          setPerfScreen('home2');
+        }
+      }
+    }
+  };
+
+  const launchNotesWithAndroidZoom = () => {
+    const finalNum = calculateTargetNumber(digit1 ?? 0, digit2 ?? 0);
+    setForcedNumber(finalNum);
+    setIsNotesZoomOpening(true);
+    setPerfScreen('notes_list');
+    setTimeout(() => {
+      setIsNotesZoomOpening(false);
+    }, 450);
+  };
+
+  const onTouchStartScreen = (e) => {
+    const t = e.touches[0];
+    if (!t) return;
+    handleGestureStart(t.clientX, t.clientY, e.touches.length, false);
+  };
+  const onTouchMoveScreen = (e) => {
+    const t = e.touches[0];
+    if (!t) return;
+    handleGestureMove(t.clientX, t.clientY);
+  };
+  const onTouchEndScreen = (e) => {
+    const t = e.changedTouches?.[0];
+    if (!t) return;
+    handleGestureEnd(t.clientX, t.clientY);
+  };
+  const onMouseDownScreen = (e) => {
+    handleGestureStart(e.clientX, e.clientY, 1, e.shiftKey);
+  };
+  const onMouseMoveScreen = (e) => {
+    if (!gestureStartRef.current.active) return;
+    handleGestureMove(e.clientX, e.clientY);
+  };
+  const onMouseUpScreen = (e) => {
+    handleGestureEnd(e.clientX, e.clientY);
+  };
+
+  const handleSecretBatteryTap = (e) => {
+    e.stopPropagation();
+    const state = batteryTapCountRef.current;
+    state.count += 1;
+    if (state.timer) clearTimeout(state.timer);
+    if (state.count >= 3) {
+      state.count = 0;
+      triggerHardResetToSettings();
+      return;
+    }
+    state.timer = setTimeout(() => {
+      state.count = 0;
+    }, 700);
+  };
+
+  const enterPerformanceMode = async (useBrowserFullscreen = false) => {
+    if (useBrowserFullscreen && document.documentElement.requestFullscreen) {
+      try {
+        await document.documentElement.requestFullscreen();
+      } catch {}
+    }
+    setDigit1(null);
+    setDigit2(null);
+    setForcedNumber(7);
+    setOpenedNoteId(null);
+    setLastDetectedCell(null);
+    setDragOffsetPx(0);
+    setPerfScreen('home1');
+    setAppMode('performance');
+  };
+
+  const triggerSoftResetToHome = () => {
+    setDigit1(null);
+    setDigit2(null);
+    setForcedNumber(7);
+    setOpenedNoteId(null);
+    setLastDetectedCell(null);
+    setDragOffsetPx(0);
+    setPerfScreen('home1');
+  };
+
+  const triggerHardResetToSettings = () => {
+    if (document.fullscreenElement && document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    }
+    setAppMode('settings');
+    showToast('Menú de Configuración de Mago');
+  };
+
+  const handleNotesBackTap = () => {
+    if (perfScreen === 'note_detail') {
+      setOpenedNoteId(null);
+      setPerfScreen('notes_list');
+    } else if (perfScreen === 'notes_list') {
+      triggerSoftResetToHome();
+    }
+  };
+
+  const handleNotesPlusTap = () => {
+    triggerSoftResetToHome();
+  };
+
+  const generateForcedListItems = (listObj, targetPos) => {
+    if (!listObj) return [];
+    const rawItems = Array.isArray(listObj.items) ? listObj.items : [];
+    const forceItem = (listObj.forceItem || '').trim() || rawItems[0] || 'Mystery Item';
+    const clampedIndex = Math.max(1, Math.min(100, targetPos || 7)) - 1;
+
+    const pool = rawItems.filter(
+      (item) => item.trim().toLowerCase() !== forceItem.toLowerCase()
+    );
+
+    while (pool.length < 100) {
+      pool.push(`Elemento #${pool.length + 1}`);
+    }
+
+    const result = [];
+    let poolCursor = 0;
+
+    for (let i = 0; i < 100; i++) {
+      if (i === clampedIndex) {
+        result.push({
+          number: i + 1,
+          text: forceItem,
+          isForced: true
+        });
+      } else {
+        result.push({
+          number: i + 1,
+          text: pool[poolCursor] || `Elemento ${i + 1}`,
+          isForced: false
+        });
+        poolCursor++;
+      }
+    }
+    return result;
+  };
+
+  const currentEditingList = useMemo(
+    () => lists.find((l) => l.id === editingListId) || lists[0],
+    [lists, editingListId]
+  );
+
+  const handleWallpaperUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setCustomWallpaperDataUrl(event.target.result);
+      setSelectedWallpaperId('custom-upload');
+      showToast('¡Tu fondo de pantalla fue aplicado!');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleApplyWallpaperUrl = (e) => {
+    e?.preventDefault();
+    const rawUrl = wallpaperUrlInput.trim();
+    if (!rawUrl) return;
+    let finalUrl = rawUrl;
+    const driveMatch =
+      rawUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) ||
+      rawUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (rawUrl.includes('drive.google.com') && driveMatch && driveMatch[1]) {
+      finalUrl = `https://drive.google.com/uc?export=view&id=${driveMatch[1]}`;
+    }
+    setCustomWallpaperDataUrl(finalUrl);
+    setSelectedWallpaperId('custom-upload');
+    showToast('¡Fondo de pantalla importado!');
+  };
+
+  const GOOGLE_WALLPAPER_GALLERY = [
+    {
+      name: 'iOS Dark Titanium',
+      url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=900&q=80'
+    },
+    {
+      name: 'Deep Space Nebula',
+      url: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=900&q=80'
+    },
+    {
+      name: 'Yosemite Night',
+      url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80'
+    },
+    {
+      name: 'AMOLED Neon Flow',
+      url: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=900&q=80'
+    }
+  ];
+
+  const toggleListHideMode = (listId) => {
+    setLists((prev) =>
+      prev.map((l) => (l.id === listId ? { ...l, hideMode: !l.hideMode } : l))
+    );
+  };
+
+  const updateListTitle = (listId, newTitle) => {
+    setLists((prev) =>
+      prev.map((l) => (l.id === listId ? { ...l, title: newTitle } : l))
+    );
+  };
+
+  const updateListForceItem = (listId, newForceItem) => {
+    setLists((prev) =>
+      prev.map((l) => (l.id === listId ? { ...l, forceItem: newForceItem } : l))
+    );
+  };
+
+  const addItemToCurrentList = (e) => {
+    e.preventDefault();
+    const trimmed = newItemText.trim();
+    if (!trimmed) return;
+    setLists((prev) =>
+      prev.map((l) =>
+        l.id === editingListId ? { ...l, items: [trimmed, ...l.items] } : l
+      )
+    );
+    setNewItemText('');
+    showToast(`Añadido "${trimmed}"`);
+  };
+
+  const removeItemFromCurrentList = (idxToRemove) => {
+    setLists((prev) =>
+      prev.map((l) =>
+        l.id === editingListId
+          ? { ...l, items: l.items.filter((_, idx) => idx !== idxToRemove) }
+          : l
+      )
+    );
+  };
+
+  const openBulkEditor = () => {
+    setBulkItemsText(currentEditingList.items.join('\n'));
+    setShowBulkModal(true);
+  };
+
+  const saveBulkEditor = () => {
+    const lines = bulkItemsText
+      .split('\n')
+      .map((line) => line.replace(/^\d+[\.\)]\s*/, '').trim())
+      .filter(Boolean);
+    if (lines.length === 0) return;
+    setLists((prev) =>
+      prev.map((l) =>
+        l.id === editingListId
+          ? {
+              ...l,
+              items: lines,
+              forceItem: lines.includes(l.forceItem) ? l.forceItem : lines[0]
+            }
+          : l
+      )
+    );
+    setShowBulkModal(false);
+    showToast(`Guardados ${lines.length} ítems`);
+  };
+
+  const generateExportUrl = (listObj) => {
+    const payload = {
+      title: listObj.title,
+      forceItem: listObj.forceItem,
+      items: listObj.items,
+      exportedAt: new Date().toISOString()
+    };
+    const jsonStr = JSON.stringify(payload);
+    const base64 = btoa(unescape(encodeURIComponent(jsonStr)));
+    const baseUrl = window.location.origin + window.location.pathname;
+    return `${baseUrl}?importList=${encodeURIComponent(base64)}`;
+  };
+
+  const handleCopyExportLink = (listObj) => {
+    const url = generateExportUrl(listObj);
+    navigator.clipboard?.writeText(url);
+    setImportUrlInput(url);
+    showToast(`¡Enlace copiado para "${listObj.title}"!`);
+  };
+
+  const handleParseImportUrl = (e) => {
+    e?.preventDefault();
+    const raw = importUrlInput.trim();
+    if (!raw) return;
+    try {
+      let base64Param = raw;
+      if (raw.includes('importList=')) {
+        const urlParts = raw.split('importList=')[1];
+        base64Param = decodeURIComponent(urlParts.split('&')[0]);
+      }
+      const jsonStr = decodeURIComponent(escape(atob(base64Param)));
+      const parsed = JSON.parse(jsonStr);
+      if (!parsed.title || !Array.isArray(parsed.items)) {
+        throw new Error('Malformed list');
+      }
+      setPendingImportData(parsed);
+    } catch {
+      showToast('Enlace inválido. Primero exporta una lista para probar.', 'error');
+    }
+  };
+
+  const confirmImportOverwrite = () => {
+    if (!pendingImportData) return;
+    setLists((prev) =>
+      prev.map((l) =>
+        l.id === targetOverwriteSlot
+          ? {
+              ...l,
+              title: pendingImportData.title,
+              forceItem: pendingImportData.forceItem || pendingImportData.items[0] || '',
+              items: pendingImportData.items,
+              hideMode: false
+            }
+          : l
+      )
+    );
+    setEditingListId(targetOverwriteSlot);
+    setPendingImportData(null);
+    setImportUrlInput('');
+    showToast(`¡Lista "${pendingImportData.title}" importada!`);
+  };
+
+  const getWallpaperStyle = () => {
+    if (selectedWallpaperId === 'custom-upload' && customWallpaperDataUrl) {
+      return {
+        backgroundImage: `url(${customWallpaperDataUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      };
+    }
+    const preset =
+      PRESET_WALLPAPERS.find((w) => w.id === selectedWallpaperId) ||
+      PRESET_WALLPAPERS[0];
+    return {
+      background: preset.style
+    };
+  };
+
+  const visibleNotesLists = useMemo(
+    () => lists.filter((l) => !l.hideMode),
+    [lists]
+  );
+
+  const activeNoteObj = useMemo(
+    () => lists.find((l) => l.id === openedNoteId) || visibleNotesLists[0],
+    [lists, openedNoteId, visibleNotesLists]
+  );
+
+  const generatedNoteRows = useMemo(
+    () => generateForcedListItems(activeNoteObj, forcedNumber),
+    [activeNoteObj, forcedNumber]
+  );
+
+  if (appMode === 'performance') {
+    const isHomeScreen = perfScreen === 'home1' || perfScreen === 'home2' || perfScreen === 'home3';
+    const basePagePercent = perfScreen === 'home1' ? 0 : perfScreen === 'home2' ? -33.333 : -66.666;
+
+    return (
+      <div
+        onTouchStart={onTouchStartScreen}
+        onTouchMove={onTouchMoveScreen}
+        onTouchEnd={onTouchEndScreen}
+        onMouseDown={onMouseDownScreen}
+        onMouseMove={onMouseMoveScreen}
+        onMouseUp={onMouseUpScreen}
+        className="fixed inset-0 w-screen h-[100dvh] overflow-hidden select-none touch-none flex flex-col justify-between z-50 animate-in fade-in duration-300"
+        style={isHomeScreen ? getWallpaperStyle() : { backgroundColor: '#f2f2f7' }}
+      >
+        <div
+          className={`w-full max-w-md mx-auto px-6 pt-3 pb-1.5 flex items-center justify-between text-[13px] font-semibold z-30 shrink-0 ${
+            isHomeScreen ? 'text-white drop-shadow-sm' : 'text-zinc-900 bg-transparent'
+          }`}
+        >
+          <span
+            onDoubleClick={triggerHardResetToSettings}
+            className="tracking-tight font-bold cursor-default"
+          >
+            {currentTimeStr}
+          </span>
+
+          {showTrainingOverlay && (
+            <span className="px-2 py-0.5 rounded-full bg-emerald-500/90 text-black font-mono font-bold text-[10px]">
+              D1:{digit1 ?? '-'} D2:{digit2 ?? '-'} → #{forcedNumber}
+            </span>
+          )}
+
+          <div
+            onClick={handleSecretBatteryTap}
+            className="flex items-center gap-1.5 py-1 pl-2 cursor-default"
+          >
+            <Signal className="w-3.5 h-3.5 stroke-[2.5]" />
+            <Wifi className="w-3.5 h-3.5 stroke-[2.5]" />
+            <div className="flex items-center gap-0.5">
+              <Battery className="w-4 h-4 fill-current" />
+            </div>
+          </div>
+        </div>
+
+        {isHomeScreen && (
+          <div className="flex-1 w-full max-w-md mx-auto flex flex-col justify-between overflow-hidden relative">
+            <div
+              className="flex-1 flex w-[300%] h-full will-change-transform"
+              style={{
+                transform: `translate3d(calc(${basePagePercent}% + ${dragOffsetPx}px), 0, 0)`,
+                transition: isDraggingCarousel
+                  ? 'none'
+                  : 'transform 380ms cubic-bezier(0.22, 1, 0.36, 1)'
+              }}
+            >
+              {/* PAGE 1 */}
+              <div className="w-1/3 h-full px-6 pt-2 pb-3 flex flex-col justify-between">
+                <div className="rounded-3xl bg-white/15 backdrop-blur-xl border border-white/20 p-3.5 flex items-center justify-between shadow-lg relative">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-wider text-white/85 font-semibold">
+                      {currentDateLabel}
+                    </p>
+                    <div className="flex items-baseline gap-2 mt-0.5">
+                      <span className="text-2xl font-bold text-white tracking-tight">23°</span>
+                      <span className="text-xs text-white/90 font-medium">Despejado</span>
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-200 to-amber-400 shadow-md flex items-center justify-center">
+                    <span className="text-lg">☀️</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-x-6 place-items-center pt-2">
+                  {page1TopApps.map((app, idx) => (
+                    <div key={`${app.id}-${idx}`} className="flex flex-col items-center gap-1.5">
+                      <div className="relative active:scale-90 transition-transform">
+                        <RealisticAppIcon
+                          id={app.id}
+                          customIconUrl={app.customIconUrl}
+                          resolvedIconsMap={resolvedIconsMap}
+                        />
+                      </div>
+                      <span className="text-[11px] text-white font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)] tracking-tight truncate max-w-[78px]">
+                        {app.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div
+                  ref={gridPage1Ref}
+                  className={`my-auto py-2 rounded-3xl transition-all ${
+                    showTrainingOverlay ? 'ring-2 ring-emerald-400 bg-emerald-950/30' : ''
+                  }`}
+                >
+                  <div className="grid grid-cols-3 gap-x-6 gap-y-4 place-items-center">
+                    {page1KeypadApps.map((app) => (
+                      <div key={app.digit} className="flex flex-col items-center gap-1.5 relative">
+                        <div className="relative active:scale-90 transition-transform">
+                          <RealisticAppIcon
+                            id={app.id}
+                            customIconUrl={app.customIconUrl}
+                            resolvedIconsMap={resolvedIconsMap}
+                          />
+                          {app.badge && !showTrainingOverlay && (
+                            <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 bg-[#ff3b30] text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow-md">
+                              {app.badge}
+                            </span>
+                          )}
+                          {showTrainingOverlay && (
+                            <div className="absolute inset-0 rounded-[15px] bg-black/65 border-2 border-emerald-400 flex flex-col items-center justify-center">
+                              <span className="text-emerald-300 font-mono font-extrabold text-xl leading-none">
+                                {app.digit}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-[11px] text-white font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)] tracking-tight truncate max-w-[78px]">
+                          {app.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* PAGE 2 */}
+              <div className="w-1/3 h-full px-6 pt-2 pb-3 flex flex-col justify-between">
+                <div className="rounded-3xl bg-zinc-900/65 backdrop-blur-xl border border-white/15 p-3.5 flex items-center justify-between shadow-lg relative">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center">
+                      <RealisticAppIcon id="tiktok" resolvedIconsMap={resolvedIconsMap} size="w-10 h-10" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-white">TikTok • Tendencias</p>
+                      <p className="text-[11px] text-white/70">Magia en la calle</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-x-6 place-items-center pt-2">
+                  {page2TopApps.map((app, idx) => (
+                    <div key={`${app.id}-${idx}`} className="flex flex-col items-center gap-1.5">
+                      <div className="relative active:scale-90 transition-transform">
+                        <RealisticAppIcon
+                          id={app.id}
+                          customIconUrl={app.customIconUrl}
+                          resolvedIconsMap={resolvedIconsMap}
+                        />
+                      </div>
+                      <span className="text-[11px] text-white font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)] tracking-tight truncate max-w-[78px]">
+                        {app.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div
+                  ref={gridPage2Ref}
+                  className={`my-auto py-2 rounded-3xl transition-all ${
+                    showTrainingOverlay ? 'ring-2 ring-emerald-400 bg-emerald-950/30' : ''
+                  }`}
+                >
+                  <div className="grid grid-cols-3 gap-x-6 gap-y-4 place-items-center">
+                    {page2KeypadApps.map((app) => (
+                      <div key={app.digit} className="flex flex-col items-center gap-1.5 relative">
+                        <div className="relative active:scale-90 transition-transform">
+                          <RealisticAppIcon
+                            id={app.id}
+                            customIconUrl={app.customIconUrl}
+                            resolvedIconsMap={resolvedIconsMap}
+                          />
+                          {app.badge && !showTrainingOverlay && (
+                            <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 bg-[#ff3b30] text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow-md">
+                              {app.badge}
+                            </span>
+                          )}
+                          {showTrainingOverlay && (
+                            <div className="absolute inset-0 rounded-[15px] bg-black/65 border-2 border-emerald-400 flex flex-col items-center justify-center">
+                              <span className="text-emerald-300 font-mono font-extrabold text-xl leading-none">
+                                {app.digit}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-[11px] text-white font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)] tracking-tight truncate max-w-[78px]">
+                          {app.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* PAGE 3 (ONLY NOTES APP IS INTERACTIVE) */}
+              <div className="w-1/3 h-full px-6 pt-2 pb-3 flex flex-col justify-between">
+                <div className="rounded-3xl bg-zinc-900/65 backdrop-blur-xl border border-white/15 p-3.5 flex items-center justify-between shadow-lg relative">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center">
+                      <RealisticAppIcon id="notes" resolvedIconsMap={resolvedIconsMap} size="w-10 h-10" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-white">Notas • Carpeta Principal</p>
+                      <p className="text-[11px] text-white/70">Toca para abrir notas</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-x-6 place-items-center pt-2">
+                  {page3TopApps.map((app, idx) => (
+                    <div key={`${app.id}-${idx}`} className="flex flex-col items-center gap-1.5 pointer-events-none">
+                      <div className="relative">
+                        <RealisticAppIcon
+                          id={app.id}
+                          customIconUrl={app.customIconUrl}
+                          resolvedIconsMap={resolvedIconsMap}
+                        />
+                      </div>
+                      <span className="text-[11px] text-white font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)] tracking-tight truncate max-w-[78px]">
+                        {app.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="my-auto py-2 rounded-3xl">
+                  <div className="grid grid-cols-3 gap-x-6 gap-y-4 place-items-center">
+                    {page3KeypadApps.map((app) => (
+                      <div
+                        key={app.digit}
+                        onClick={(e) => {
+                          if (app.isNotesApp) {
+                            e.stopPropagation();
+                            launchNotesWithAndroidZoom();
+                          }
+                        }}
+                        className={`flex flex-col items-center gap-1.5 relative ${
+                          app.isNotesApp ? 'cursor-pointer active:scale-95' : 'pointer-events-none'
+                        }`}
+                      >
+                        <div className="relative">
+                          <RealisticAppIcon
+                            id={app.id}
+                            customIconUrl={app.customIconUrl}
+                            resolvedIconsMap={resolvedIconsMap}
+                          />
+                          {app.badge && (
+                            <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 bg-[#ff3b30] text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow-md">
+                              {app.badge}
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[11px] text-white font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)] tracking-tight truncate max-w-[78px]">
+                          {app.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-5 pb-4 pt-1 flex flex-col items-center gap-3 shrink-0">
+              <div className="px-3 py-1 rounded-full bg-black/25 backdrop-blur-md flex items-center gap-2">
+                <span
+                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                    perfScreen === 'home1' ? 'bg-white scale-125' : 'bg-white/40'
+                  }`}
+                />
+                <span
+                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                    perfScreen === 'home2' ? 'bg-white scale-125' : 'bg-white/40'
+                  }`}
+                />
+                <span
+                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                    perfScreen === 'home3' ? 'bg-white scale-125' : 'bg-white/40'
+                  }`}
+                />
+              </div>
+
+              <div className="w-full bg-white/20 backdrop-blur-2xl rounded-[32px] p-3.5 flex items-center justify-around border border-white/20 shadow-2xl">
+                <RealisticAppIcon id="phone" resolvedIconsMap={resolvedIconsMap} size="w-[58px] h-[58px]" />
+                <RealisticAppIcon id="chrome" resolvedIconsMap={resolvedIconsMap} size="w-[58px] h-[58px]" />
+                <RealisticAppIcon id="messages" resolvedIconsMap={resolvedIconsMap} size="w-[58px] h-[58px]" />
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    launchNotesWithAndroidZoom();
+                  }}
+                  className="cursor-pointer active:scale-90 transition-transform"
+                >
+                  <RealisticAppIcon id="notes" resolvedIconsMap={resolvedIconsMap} size="w-[58px] h-[58px]" />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {perfScreen === 'notes_list' && (
+          <div
+            className={`flex-1 w-full max-w-md mx-auto flex flex-col bg-[#f2f2f7] text-zinc-900 overflow-hidden transform-gpu transition-all duration-400 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
+              isNotesZoomOpening
+                ? 'scale-75 opacity-0 translate-y-24 rounded-[44px]'
+                : 'scale-100 opacity-100 translate-y-0 rounded-none'
+            }`}
+          >
+            <div className="px-4 pt-1 pb-2 flex items-center justify-between">
+              <button
+                onClick={handleNotesBackTap}
+                className="flex items-center text-[#d97706] font-medium text-[17px] active:opacity-50 cursor-pointer"
+              >
+                <ChevronLeft className="w-6 h-6 -ml-1.5 stroke-[2.5]" />
+                <span>{localization.folderSubtitle || 'Carpetas'}</span>
+              </button>
+              <button
+                onClick={handleNotesPlusTap}
+                className="text-[#d97706] p-1 rounded-full active:opacity-50 cursor-pointer"
+              >
+                <MoreHorizontal className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="px-5 pb-3">
+              <h1 className="text-[32px] font-bold tracking-tight text-zinc-900 leading-tight">
+                {localization.notesHeader || 'Notas'}
+              </h1>
+              <div className="mt-2 bg-[#e3e3e8] rounded-xl px-3 py-2 flex items-center gap-2 text-zinc-500 text-[15px]">
+                <Search className="w-4 h-4 text-zinc-400" />
+                <span>{localization.searchPlaceholder || 'Buscar'}</span>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-4 pb-6">
+              <div className="bg-white rounded-2xl divide-y divide-zinc-200/80 shadow-xs overflow-hidden">
+                {visibleNotesLists.map((noteList, idx) => {
+                  const dayLabel =
+                    localization.daysOfWeek[idx % localization.daysOfWeek.length] || 'Hoy';
+                  const firstPreviewItem =
+                    forcedNumber === 1
+                      ? noteList.forceItem
+                      : noteList.items.find(
+                          (it) => it.toLowerCase() !== (noteList.forceItem || '').toLowerCase()
+                        ) || noteList.items[0];
+
+                  return (
+                    <div
+                      key={noteList.id}
+                      onClick={() => {
+                        setOpenedNoteId(noteList.id);
+                        setPerfScreen('note_detail');
+                      }}
+                      className="px-5 py-3.5 hover:bg-zinc-50 active:bg-zinc-100 cursor-pointer transition flex flex-col gap-0.5"
+                    >
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-zinc-900 text-[16px] truncate">
+                          {noteList.title}
+                        </h3>
+                        <ChevronRight className="w-4 h-4 text-zinc-300 shrink-0" />
+                      </div>
+                      <div className="flex items-center gap-2 text-[13px] text-zinc-500 truncate">
+                        <span className="font-normal text-zinc-400 shrink-0">{dayLabel}</span>
+                        <span className="truncate text-zinc-500">
+                          {localization.dummyNoteText}
+                          {firstPreviewItem}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="bg-[#f9f9fb]/90 backdrop-blur-md border-t border-zinc-200 px-5 py-3.5 flex items-center justify-between text-[12px] text-zinc-500">
+              <span className="w-6" />
+              <span className="font-medium text-zinc-700">
+                {visibleNotesLists.length} {localization.notesHeader?.toLowerCase() || 'notas'}
+              </span>
+              <button
+                onClick={handleNotesPlusTap}
+                className="text-[#d97706] active:opacity-50 cursor-pointer"
+              >
+                <SquarePen className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {perfScreen === 'note_detail' && activeNoteObj && (
+          <div className="flex-1 w-full max-w-md mx-auto flex flex-col bg-white text-zinc-900 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-4 pt-1 pb-2 flex items-center justify-between border-b border-zinc-100 bg-white/95 backdrop-blur">
+              <button
+                onClick={handleNotesBackTap}
+                className="flex items-center text-[#d97706] font-medium text-[17px] active:opacity-50 cursor-pointer"
+              >
+                <ChevronLeft className="w-6 h-6 -ml-1.5 stroke-[2.5]" />
+                <span>{localization.notesHeader || 'Notas'}</span>
+              </button>
+              <div className="flex items-center gap-4 text-[#d97706]">
+                <Share className="w-5 h-5" />
+                <button onClick={handleNotesPlusTap} className="cursor-pointer">
+                  <Plus className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-6 py-4 touch-pan-y">
+              <p className="text-center text-[12px] text-zinc-400 mb-3">
+                {currentDateLabel} a las {currentTimeStr}
+              </p>
+              <h2 className="text-[24px] font-bold text-zinc-900 mb-4 tracking-tight">
+                {activeNoteObj.title}
+              </h2>
+              <div className="space-y-1.5 text-[16px] leading-relaxed text-zinc-800 font-normal pb-16">
+                {generatedNoteRows.map((row) => (
+                  <div
+                    key={row.number}
+                    className={`flex items-baseline gap-2.5 py-0.5 rounded px-1 ${
+                      showTrainingOverlay && row.isForced
+                        ? 'bg-amber-100 text-amber-950 font-bold ring-1 ring-amber-400'
+                        : ''
+                    }`}
+                  >
+                    <span className="text-zinc-400 tabular-nums text-[15px] w-7 shrink-0 text-right">
+                      {row.number}.
+                    </span>
+                    <span className="text-zinc-900">{row.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  const filteredEditingItems = currentEditingList.items.filter((item) =>
+    item.toLowerCase().includes(itemSearchFilter.toLowerCase())
+  );
+
+  return (
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col">
+      {toastMessage && (
+        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-2xl border bg-zinc-900 border-purple-500/50 text-sm text-white animate-in slide-in-from-bottom-3 duration-200">
+          <Sparkles className="w-4 h-4 text-purple-400 shrink-0" />
+          <span>{toastMessage.msg}</span>
+        </div>
+      )}
+
+      <header className="border-b border-zinc-800/80 bg-zinc-900/80 backdrop-blur-md sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-600 via-indigo-600 to-amber-500 flex items-center justify-center shadow-lg shadow-purple-600/20">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg sm:text-xl font-bold tracking-tight text-white">
+                  MirageOS Pro
+                </h1>
+                <span className="text-[11px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold">
+                  3 Páginas + Notas Android Zoom
+                </span>
+              </div>
+              <p className="text-xs text-zinc-400">
+                Sistema Operativo de Mago con Forzaje (01–100)
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              onClick={() => setShowTrainingOverlay(!showTrainingOverlay)}
+              className={`px-3 py-2 rounded-xl text-xs font-medium border flex items-center gap-1.5 transition cursor-pointer ${
+                showTrainingOverlay
+                  ? 'bg-emerald-500/15 border-emerald-500/50 text-emerald-300'
+                  : 'bg-zinc-800/80 border-zinc-700 text-zinc-300 hover:bg-zinc-800'
+              }`}
+            >
+              {showTrainingOverlay ? <Eye className="w-4 h-4 text-emerald-400" /> : <EyeOff className="w-4 h-4 text-zinc-400" />}
+              <span>Guía 3x3: {showTrainingOverlay ? 'VISIBLE' : 'OCULTA'}</span>
+            </button>
+
+            <button
+              onClick={() => enterPerformanceMode(true)}
+              className="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 transition cursor-pointer"
+            >
+              <Maximize2 className="w-4 h-4 text-emerald-400" />
+              <span>Pantalla Completa Total</span>
+            </button>
+
+            <button
+              onClick={() => enterPerformanceMode(false)}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-purple-600/30 transition transform active:scale-95 cursor-pointer"
+            >
+              <Play className="w-4 h-4 fill-current" />
+              <span>Abrir Modo Performance</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto no-scrollbar border-t border-zinc-800/60">
+          {[
+            { id: 'icons', label: 'Iconos Oficiales (App Store)', icon: Sparkles },
+            { id: 'pwa', label: 'Abrir desde tu Teléfono (Sin X)', icon: Smartphone },
+            { id: 'lists', label: 'Listas y Force Item', icon: List },
+            { id: 'wallpaper', label: 'Fondo de Pantalla', icon: ImageIcon },
+            { id: 'localization', label: 'Idioma y Textos', icon: Globe },
+            { id: 'importExport', label: 'Importar / Exportar URL', icon: Share2 },
+            { id: 'guide', label: 'Secretos y Resets', icon: BookOpen }
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeSettingsTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveSettingsTab(tab.id)}
+                className={`px-4 py-3 text-xs sm:text-sm font-medium border-b-2 flex items-center gap-2 whitespace-nowrap transition cursor-pointer ${
+                  isActive
+                    ? 'border-purple-500 text-purple-300 bg-purple-500/5'
+                    : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </header>
+
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+        {activeSettingsTab === 'icons' && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-7 bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full mb-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> 3 Páginas de Inicio + Notas Android Zoom
+                  </span>
+                  <h2 className="text-lg font-bold text-white">
+                    Tus Apps (Toca cualquiera para cambiarla)
+                  </h2>
+                </div>
+                <button
+                  onClick={resetAllIconsToDefaults}
+                  className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 flex items-center gap-1.5 cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" /> Restaurar Originales
+                </button>
+              </div>
+
+              <div className="space-y-2.5">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-purple-300">
+                  Página 1 — Teclado Secreto (1 al 9)
+                </h3>
+                <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-zinc-950 border border-zinc-800">
+                  {page1KeypadApps.map((app, idx) => {
+                    const isSelected =
+                      selectedSlotToEdit.group === 'p1_keypad' &&
+                      selectedSlotToEdit.index === idx;
+                    return (
+                      <div
+                        key={app.digit}
+                        onClick={() => setSelectedSlotToEdit({ group: 'p1_keypad', index: idx })}
+                        className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 cursor-pointer transition relative ${
+                          isSelected
+                            ? 'bg-purple-950/40 border-purple-500 ring-2 ring-purple-500/40'
+                            : 'bg-zinc-900/60 border-zinc-800/80 hover:border-zinc-700'
+                        }`}
+                      >
+                        <span className="absolute top-2 left-2 w-5 h-5 rounded-full bg-emerald-500 text-black font-mono font-extrabold text-[11px] flex items-center justify-center shadow">
+                          {app.digit}
+                        </span>
+                        <RealisticAppIcon
+                          id={app.id}
+                          customIconUrl={app.customIconUrl}
+                          resolvedIconsMap={resolvedIconsMap}
+                          size="w-14 h-14"
+                        />
+                        <span className="text-xs font-semibold text-white truncate max-w-full">
+                          {app.name}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="space-y-2.5">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300">
+                  Página 2 — Apps Diarias (Sin duplicados)
+                </h3>
+                <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-zinc-950 border border-zinc-800">
+                  {page2KeypadApps.map((app, idx) => {
+                    const isSelected =
+                      selectedSlotToEdit.group === 'p2_keypad' &&
+                      selectedSlotToEdit.index === idx;
+                    return (
+                      <div
+                        key={app.digit}
+                        onClick={() => setSelectedSlotToEdit({ group: 'p2_keypad', index: idx })}
+                        className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 cursor-pointer transition relative ${
+                          isSelected
+                            ? 'bg-purple-950/40 border-purple-500 ring-2 ring-purple-500/40'
+                            : 'bg-zinc-900/60 border-zinc-800/80 hover:border-zinc-700'
+                        }`}
+                      >
+                        <span className="absolute top-2 left-2 w-5 h-5 rounded-full bg-emerald-500 text-black font-mono font-extrabold text-[11px] flex items-center justify-center shadow">
+                          {app.digit}
+                        </span>
+                        <RealisticAppIcon
+                          id={app.id}
+                          customIconUrl={app.customIconUrl}
+                          resolvedIconsMap={resolvedIconsMap}
+                          size="w-14 h-14"
+                        />
+                        <span className="text-xs font-semibold text-white truncate max-w-full">
+                          {app.name}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="space-y-2.5">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-amber-300">
+                  Página 3 — Contiene la App de Notas Oficial
+                </h3>
+                <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-zinc-950 border border-zinc-800">
+                  {page3KeypadApps.map((app, idx) => {
+                    const isSelected =
+                      selectedSlotToEdit.group === 'p3_keypad' &&
+                      selectedSlotToEdit.index === idx;
+                    return (
+                      <div
+                        key={app.digit}
+                        onClick={() => setSelectedSlotToEdit({ group: 'p3_keypad', index: idx })}
+                        className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 cursor-pointer transition relative ${
+                          isSelected
+                            ? 'bg-purple-950/40 border-purple-500 ring-2 ring-purple-500/40'
+                            : 'bg-zinc-900/60 border-zinc-800/80 hover:border-zinc-700'
+                        }`}
+                      >
+                        <span className="absolute top-2 left-2 w-5 h-5 rounded-full bg-amber-500 text-black font-mono font-extrabold text-[11px] flex items-center justify-center shadow">
+                          {app.digit}
+                        </span>
+                        <RealisticAppIcon
+                          id={app.id}
+                          customIconUrl={app.customIconUrl}
+                          resolvedIconsMap={resolvedIconsMap}
+                          size="w-14 h-14"
+                        />
+                        <span className="text-xs font-semibold text-white truncate max-w-full">
+                          {app.name}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col space-y-5">
+              <div>
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <Search className="w-4 h-4 text-purple-400" />
+                  Buscador Oficial de App Store
+                </h3>
+                <p className="text-xs text-zinc-400 mt-1">
+                  Busca cualquier app del mundo para poner su icono oficial exacto en la casilla seleccionada.
+                </p>
+              </div>
+
+              <form onSubmit={handleSearchAppStore} className="flex gap-2">
+                <input
+                  type="text"
+                  value={appStoreQuery}
+                  onChange={(e) => setAppStoreQuery(e.target.value)}
+                  placeholder="Ej: Netflix, Telegram, Duolingo..."
+                  className="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
+                />
+                <button
+                  type="submit"
+                  disabled={isSearchingAppStore}
+                  className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shrink-0 cursor-pointer"
+                >
+                  {isSearchingAppStore ? 'Buscando...' : 'Buscar'}
+                </button>
+              </form>
+
+              {appStoreResults.length > 0 && (
+                <div className="grid grid-cols-3 gap-2.5 max-h-[300px] overflow-y-auto p-2 rounded-xl bg-zinc-950 border border-zinc-800">
+                  {appStoreResults.map((resApp) => {
+                    const hiRes =
+                      resApp.artworkUrl512 ||
+                      resApp.artworkUrl100?.replace('100x100bb', '512x512bb');
+                    return (
+                      <div
+                        key={resApp.trackId}
+                        onClick={() => applyAppStoreItemToSelectedSlot(resApp.trackName, hiRes)}
+                        className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-purple-500 flex flex-col items-center gap-1.5 cursor-pointer transition text-center"
+                      >
+                        <img
+                          src={hiRes}
+                          alt={resApp.trackName}
+                          className="w-12 h-12 rounded-[12px] object-cover shadow"
+                        />
+                        <span className="text-[11px] text-zinc-200 font-medium line-clamp-1">
+                          {resApp.trackName}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="pt-2 border-t border-zinc-800">
+                <label className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl border border-dashed border-zinc-700 hover:border-purple-500 bg-zinc-950/60 text-xs text-zinc-300 font-medium cursor-pointer transition">
+                  <Upload className="w-4 h-4 text-purple-400" />
+                  <span>O subir imagen desde tu galería</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleUploadCustomAppIcon}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSettingsTab === 'pwa' && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-7 bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-5">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-full">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Modo Nativo Sin Bordes ni X
+              </span>
+              <h2 className="text-xl font-bold text-white">
+                Cómo abrir la app desde tu teléfono real
+              </h2>
+
+              <div className="p-4 rounded-2xl bg-purple-950/30 border border-purple-500/40 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-bold text-white">
+                    Auto-iniciar directo en la Pantalla Principal Falsa
+                  </p>
+                  <p className="text-xs text-zinc-300 mt-0.5">
+                    Abre instantáneamente en la pantalla principal falsa al iniciar.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = !autoLaunchPerformance;
+                    setAutoLaunchPerformance(next);
+                    showToast(
+                      next ? 'Auto-Inicio activado' : 'Auto-Inicio desactivado'
+                    );
+                  }}
+                  className={`relative inline-flex h-7 w-13 shrink-0 items-center rounded-full transition-colors cursor-pointer ${
+                    autoLaunchPerformance ? 'bg-emerald-500' : 'bg-zinc-700'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                      autoLaunchPerformance ? 'translate-x-7' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div className="p-4 rounded-xl bg-zinc-950/90 border border-zinc-800 text-xs text-zinc-300 space-y-1">
+                <p className="font-bold text-amber-300">💡 Atajos para volver a Ajustes:</p>
+                <p>• Toca 3 veces seguidas el icono de la batería (arriba a la derecha).</p>
+                <p>• Haz doble toque en la hora (arriba a la izquierda).</p>
+                <p>• En la app de Notas, desliza hacia abajo con 2 dedos.</p>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col items-center justify-center">
+              <p className="text-xs font-semibold text-zinc-300 mb-3 text-center">
+                Página 3 con la App de Notas Oficial
+              </p>
+              <div className="grid grid-cols-3 gap-4 p-5 rounded-3xl bg-zinc-950 border border-zinc-800">
+                {page3KeypadApps.map((app) => (
+                  <div key={app.digit} className="flex flex-col items-center gap-1.5 relative">
+                    <RealisticAppIcon
+                      id={app.id}
+                      customIconUrl={app.customIconUrl}
+                      resolvedIconsMap={resolvedIconsMap}
+                      size="w-14 h-14"
+                    />
+                    <span className="text-[11px] text-zinc-300 font-medium truncate max-w-[74px]">
+                      {app.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSettingsTab === 'lists' && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-5 space-y-4">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-base font-bold text-white flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-purple-400" />
+                    Listas Configuradas
+                  </h2>
+                </div>
+                <div className="space-y-2.5">
+                  {lists.map((list) => {
+                    const isSelected = list.id === editingListId;
+                    return (
+                      <div
+                        key={list.id}
+                        onClick={() => setEditingListId(list.id)}
+                        className={`p-3.5 rounded-xl border transition cursor-pointer flex items-center justify-between gap-3 ${
+                          isSelected
+                            ? 'bg-purple-950/30 border-purple-500/60 ring-1 ring-purple-500/40'
+                            : 'bg-zinc-950/60 border-zinc-800/80 hover:border-zinc-700'
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-sm text-white truncate">
+                              {list.title}
+                            </span>
+                            {list.hideMode && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium">
+                                Oculta
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 mt-1 text-xs text-zinc-400">
+                            <span className="inline-flex items-center gap-1 text-amber-300 font-medium truncate">
+                              <Star className="w-3 h-3 fill-amber-400 text-amber-400 shrink-0" />
+                              Forzar: {list.forceItem}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleListHideMode(list.id);
+                          }}
+                        >
+                          <button
+                            type="button"
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                              list.hideMode ? 'bg-emerald-500' : 'bg-zinc-700'
+                            }`}
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                list.hideMode ? 'translate-x-6' : 'translate-x-1'
+                              }`}
+                            />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex flex-col">
+              <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+                <div className="flex-1 min-w-[220px]">
+                  <label className="block text-[11px] uppercase tracking-wider text-zinc-400 font-semibold mb-1">
+                    Título de la Lista
+                  </label>
+                  <input
+                    type="text"
+                    value={currentEditingList.title}
+                    onChange={(e) => updateListTitle(currentEditingList.id, e.target.value)}
+                    className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2 text-sm text-white font-semibold focus:outline-none"
+                  />
+                </div>
+                <div className="flex-1 min-w-[220px]">
+                  <label className="block text-[11px] uppercase tracking-wider text-amber-400 font-semibold mb-1">
+                    ★ Force Item
+                  </label>
+                  <input
+                    type="text"
+                    value={currentEditingList.forceItem}
+                    onChange={(e) => updateListForceItem(currentEditingList.id, e.target.value)}
+                    className="w-full bg-amber-500/10 border border-amber-500/40 rounded-xl px-3.5 py-2 text-sm text-amber-200 font-semibold focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="py-4 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800">
+                <form onSubmit={addItemToCurrentList} className="flex items-center gap-2 flex-1 min-w-[240px]">
+                  <input
+                    type="text"
+                    value={newItemText}
+                    onChange={(e) => setNewItemText(e.target.value)}
+                    placeholder="Añadir nuevo ítem..."
+                    className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold flex items-center gap-1.5 shrink-0 cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Añadir
+                  </button>
+                </form>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={openBulkEditor}
+                    className="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" /> Edición Masiva
+                  </button>
+                  <button
+                    onClick={() => handleCopyExportLink(currentEditingList)}
+                    className="px-3 py-2 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/30 text-indigo-300 text-xs font-medium flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Share2 className="w-3.5 h-3.5" /> Exportar URL
+                  </button>
+                </div>
+              </div>
+
+              <div className="my-3">
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={itemSearchFilter}
+                    onChange={(e) => setItemSearchFilter(e.target.value)}
+                    placeholder="Buscar entre ítems..."
+                    className="w-full bg-zinc-950/60 border border-zinc-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-zinc-200 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex-1 max-h-[380px] overflow-y-auto pr-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {filteredEditingItems.map((item, idx) => {
+                  const isForce =
+                    item.trim().toLowerCase() ===
+                    currentEditingList.forceItem.trim().toLowerCase();
+                  return (
+                    <div
+                      key={`${item}-${idx}`}
+                      onClick={() => updateListForceItem(currentEditingList.id, item)}
+                      className={`px-3 py-2 rounded-xl border text-xs flex items-center justify-between gap-2 cursor-pointer transition ${
+                        isForce
+                          ? 'bg-amber-500/20 border-amber-500/60 text-amber-200 font-semibold'
+                          : 'bg-zinc-950/70 border-zinc-800/80 text-zinc-300 hover:border-zinc-700'
+                      }`}
+                    >
+                      <span className="truncate">{item}</span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeItemFromCurrentList(idx);
+                        }}
+                        className="text-zinc-600 hover:text-rose-400 p-1 cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSettingsTab === 'wallpaper' && (
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <div className="md:col-span-7 bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-6">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-purple-400" />
+                Fondo de Pantalla
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-700 hover:border-purple-500 rounded-2xl p-5 cursor-pointer bg-zinc-950/50 transition text-center">
+                  <Upload className="w-7 h-7 text-purple-400 mb-2" />
+                  <span className="text-xs font-semibold text-white">Subir desde Galería</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleWallpaperUpload}
+                    className="hidden"
+                  />
+                </label>
+                <form onSubmit={handleApplyWallpaperUrl} className="flex flex-col justify-center gap-2">
+                  <input
+                    type="url"
+                    value={wallpaperUrlInput}
+                    onChange={(e) => setWallpaperUrlInput(e.target.value)}
+                    placeholder="URL de imagen..."
+                    className="bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-xs text-white"
+                  />
+                  <button
+                    type="submit"
+                    className="py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold cursor-pointer"
+                  >
+                    Aplicar URL
+                  </button>
+                </form>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {GOOGLE_WALLPAPER_GALLERY.map((item) => (
+                  <div
+                    key={item.name}
+                    onClick={() => {
+                      setCustomWallpaperDataUrl(item.url);
+                      setSelectedWallpaperId('custom-upload');
+                      showToast(`Fondo "${item.name}" aplicado`);
+                    }}
+                    className="rounded-2xl p-1.5 border border-zinc-800 hover:border-blue-500 cursor-pointer bg-zinc-950/40"
+                  >
+                    <div
+                      className="h-24 rounded-xl w-full mb-1.5 bg-cover bg-center"
+                      style={{ backgroundImage: `url(${item.url})` }}
+                    />
+                    <p className="text-[11px] font-medium text-center text-zinc-300 truncate">
+                      {item.name}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="md:col-span-5 bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col items-center justify-center">
+              <span className="text-xs text-zinc-400 mb-3 font-medium">Vista Previa</span>
+              <div
+                className="w-64 h-[500px] rounded-[38px] border-8 border-zinc-950 shadow-2xl p-4 flex flex-col justify-between relative overflow-hidden"
+                style={getWallpaperStyle()}
+              >
+                <div className="flex justify-between text-[10px] text-white font-bold">
+                  <span>{currentTimeStr}</span>
+                  <span>5G</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSettingsTab === 'localization' && (
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-3xl space-y-5">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <Globe className="w-5 h-5 text-purple-400" />
+              Idioma y Textos
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-300 mb-1">Título</label>
+                <input
+                  type="text"
+                  value={localization.notesHeader}
+                  onChange={(e) => setLocalization({ ...localization, notesHeader: e.target.value })}
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-300 mb-1">Texto de Vista Previa</label>
+                <input
+                  type="text"
+                  value={localization.dummyNoteText}
+                  onChange={(e) => setLocalization({ ...localization, dummyNoteText: e.target.value })}
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-sm text-white"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSettingsTab === 'importExport' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-4">
+              <h2 className="text-lg font-bold text-white">Exportar Lista</h2>
+              {lists.map((list) => (
+                <div
+                  key={list.id}
+                  className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3"
+                >
+                  <span className="text-sm font-semibold text-white">{list.title}</span>
+                  <button
+                    onClick={() => handleCopyExportLink(list)}
+                    className="px-3 py-2 rounded-xl bg-purple-600/20 text-purple-300 text-xs font-semibold cursor-pointer"
+                  >
+                    Copiar URL
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-4">
+              <h2 className="text-lg font-bold text-white">Importar Lista</h2>
+              <form onSubmit={handleParseImportUrl} className="space-y-3">
+                <textarea
+                  rows={3}
+                  value={importUrlInput}
+                  onChange={(e) => setImportUrlInput(e.target.value)}
+                  placeholder="Enlace ?importList=..."
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-200 font-mono"
+                />
+                <button
+                  type="submit"
+                  className="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-semibold text-xs cursor-pointer"
+                >
+                  Cargar Lista
+                </button>
+              </form>
+
+              {pendingImportData && (
+                <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/50 space-y-3">
+                  <p className="text-sm font-bold text-white">{pendingImportData.title}</p>
+                  <select
+                    value={targetOverwriteSlot}
+                    onChange={(e) => setTargetOverwriteSlot(e.target.value)}
+                    className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-xs text-white"
+                  >
+                    <option value="custom1">Custom List 1</option>
+                    <option value="custom2">Custom List 2</option>
+                    <option value="custom3">Custom List 3</option>
+                  </select>
+                  <button
+                    onClick={confirmImportOverwrite}
+                    className="w-full py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold cursor-pointer"
+                  >
+                    Confirmar
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeSettingsTab === 'guide' && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-2">
+              <h3 className="text-base font-bold text-white">1. Las 3 Páginas de Inicio</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Desliza entre las 3 páginas de la pantalla principal. En la <strong>tercera página</strong> encontrarás la aplicación de Notas oficial para abrir tus predicciones.
+              </p>
+            </div>
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-2">
+              <h3 className="text-base font-bold text-white">2. Entrada Secreta de Dígitos</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Tus dos deslizamientos hacia la izquierda capturan los dos dígitos (del 01 al 100) desde la cuadrícula 3x3.
+              </p>
+            </div>
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-2">
+              <h3 className="text-base font-bold text-white">3. Resets y Atajos</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Desliza con 2 dedos hacia abajo en Notas o haz triple toque en la batería para regresar a la Configuración.
+              </p>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {showBulkModal && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-zinc-700 rounded-2xl max-w-lg w-full p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-white">Edición Masiva</h3>
+              <button onClick={() => setShowBulkModal(false)} className="text-zinc-400 hover:text-white cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <textarea
+              rows={12}
+              value={bulkItemsText}
+              onChange={(e) => setBulkItemsText(e.target.value)}
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-100 font-mono"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowBulkModal(false)}
+                className="px-4 py-2 rounded-xl bg-zinc-800 text-xs text-zinc-300 cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={saveBulkEditor}
+                className="px-4 py-2 rounded-xl bg-purple-600 text-xs font-semibold text-white cursor-pointer"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+```
